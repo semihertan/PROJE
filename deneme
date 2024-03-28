@@ -1,0 +1,61 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
+// Kitap struct'ı tanımı
+struct Kitap {
+    std::string ad;
+    std::string yazar;
+    std::string yayinevi;
+    std::string tarih;
+    std::string tur;
+    int sayfa_sayisi;
+};
+
+// Kütüphane struct'ı tanımı
+struct Kutuphane {
+    std::vector<Kitap> kitaplar;
+
+    // Kitapları dosyadan okuyan fonksiyon
+    void kitaplariOku(const std::string& dosya_yolu) {
+        std::ifstream dosya(dosya_yolu);
+        if (!dosya) {
+            std::cerr << "Dosya acilamadi: " << dosya_yolu << std::endl;
+            return;
+        }
+
+        std::string satir;
+        while (std::getline(dosya, satir)) {
+            Kitap kitap;
+            std::istringstream ss(satir);
+            std::getline(ss, kitap.ad, ',');
+            std::getline(ss, kitap.yazar, ',');
+            std::getline(ss, kitap.yayinevi, ',');
+            std::getline(ss, kitap.tarih, ',');
+            std::getline(ss, kitap.tur, ',');
+            ss >> kitap.sayfa_sayisi;
+            kitaplar.push_back(kitap);
+        }
+        dosya.close();
+    }
+
+    // Kitapları ekrana yazdıran fonksiyon
+    void kitaplariGoster() const {
+        for (const auto& kitap : kitaplar) {
+            std::cout << "Ad: " << kitap.ad << ", Yazar: " << kitap.yazar << ", Yayınevi: " << kitap.yayinevi << ", Tarih: " << kitap.tarih << ", Tür: " << kitap.tur << ", Sayfa Sayısı: " << kitap.sayfa_sayisi << std::endl;
+        }
+    }
+};
+
+int main() {
+    Kutuphane kutuphane;
+
+    // Kitapları dosyadan oku
+    kutuphane.kitaplariOku("kitaplar.txt");
+
+    // Kitapları ekrana yazdır
+    kutuphane.kitaplariGoster();
+
+    return 0;
+}
